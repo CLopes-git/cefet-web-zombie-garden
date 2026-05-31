@@ -89,6 +89,28 @@ router.get('/new/', (req, res) => {
 //      - Em caso de sucesso do INSERT, colocar uma mensagem feliz
 //      - Em caso de erro do INSERT, colocar mensagem vermelhinha
 
+router.post('/', async (req, res) => {
+  const name = req.body.name;
+
+  try {
+    const [result] = await db.execute(
+      'INSERT INTO person (name) VALUES (?)',
+      [name]
+    );
+
+    if (result.affectedRows !== 1) {
+      req.flash('error', 'Não foi possível registrar a pessoa.');
+    } else {
+      req.flash('success', 'Pessoa registrada com sucesso!');
+    }
+
+  } catch (error) {
+    req.flash('error', `Erro ao registrar pessoa: ${error}`);
+  }
+
+  res.redirect('/people');
+});
+
 
 /* DELETE uma pessoa */
 // Exercício 2: IMPLEMENTAR AQUI
